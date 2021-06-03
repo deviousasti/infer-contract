@@ -1,0 +1,25 @@
+
+html, body {
+    height: 100%;
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+
+.title { height: 30px; position: relative; padding: 10px; margin: 0; display: inline-block; }
+
+.main { 
+    height: calc(100% - 60px); 
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.code-panel {
+    flex: 1 1 auto;
+    height: 100%;
+    border: 1px solid gray;
+    min-height: 300px;
+    font-size: 14pt;
+    margin: 0;
+ }
