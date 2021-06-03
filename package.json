@@ -1,0 +1,20 @@
+{
+  "private": true,
+  "scripts": {
+    "start": "dotnet fable watch src --run webpack-dev-server"
+  },
+  "devDependencies": {
+    "css-loader": "^5.2.6",
+    "style-loader": "^2.0.0",
+    "webpack": "^4.46.0",
+    "webpack-cli": "^3.3.0",
+    "webpack-dev-server": "^3.11.2"
+  },
+  "name": "SimpleFableApp",
+  "version": "1.0.0",
+  "dependencies": {
+    "ace-builds": "^1.4.12",
+    "node-sass": "^6.0.0",
+    "purecss": "^2.0.6"
+  }
+}

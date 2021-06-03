@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+    <title>Infer Contract</title>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="icon.png" />
+    <link rel="stylesheet" href="main.css" />
+</head>
+<body class="flex full-height">
+    <h1 class="title">
+        Infer Contract
+    </h1>
+    <main class="main">
+        <pre class="code-panel" id="json-editor">
+{
+    "fcid": "FC000",
+    "pickTicketId": "12787242A",
+    "shipMethod": "FedExHome_MF",
+    "shippingCarrier": "FedEx",
+    "shippingLabels": [
+        {
+        "trackingNumber": "1234567",
+        "shippingLabelUrl": "",
+        "shippingLabelZpl": ""
+        }
+    ],
+    "shippedDate": "2020-10-09T20:57:33+00:00",
+    "expectedDeliveryDate": "2020-10-09T20:57:33+00:00",
+    "carrierPickupDate": "2020-10-09T20:57:33+00:00",
+    "shippingLocation": "SH1",
+    "shippedFrom": {
+        "address1": "2 GATEWAY BLVDBBB",
+        "address2": "INBOUND",
+        "city": "PEDRICKTOWN",
+        "state": "NJ",
+        "zip": "08067",
+        "isBusiness": null,
+        "isWeekendDeliveries": null,
+        "businessName": null
+    },
+    "skuQty": {
+        "AA8FS6": 2
+    },
+    "skuUnitQty": {
+        "AA8FS6": 2
+    },
+    "cancelledQty": {},
+    "cancelledUnitQty": {},
+    "user": "SLAM",
+    "userDetails": null,
+    "timestamp": "2020-10-09T20:57:33+00:00",
+    "packageAsn": "ASN_HERE",
+    "storeId": null,
+    "carrierMethodId": null,
+    "xmlCarrierServiceCode": "167",
+    "OutboundTrackingNumber": "1234567",
+    "InboundTrackingNumber": null,
+    "UserId": "SLAM"
+}
+        </pre>
+        <pre class="code-panel" id="fsharp-editor"></pre>
+    </main>
+
+    <script src="bundle.js"></script>
+</body>
+</html>
