@@ -173,10 +173,15 @@ let infer text =
     match SimpleJson.tryParse text with
     | Some (JObject _ as json) -> Ok <| makeType (JArray [ json ])
     | Some (JArray _ as json) -> Ok <| makeType json
-    | None -> Error "Could not parse json"
+    | None -> 
+        try
+            Fable.Core.JS.JSON.parse text |> ignore
+            Error "Could not parse json"
+        with ex ->
+            Error ("Parse error: \n" + ex.Message)            
     | _ -> Error "Unsupported json construct"
 
 let generateSource =
     function
     | Ok def -> makeSource 0 def
-    | Error error -> $"// {error}"
+    | Error error -> $"(* {error} *)"
