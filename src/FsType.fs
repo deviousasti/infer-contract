@@ -87,7 +87,7 @@ let (|JLiteral|_|) = function JString _ | JBool _ | JNumber _ -> Some () | _ -> 
 let (|JBag|_|) map =
     iif (Map.forall (tuple (function UpperCase _, JLiteral -> true | _ -> false)) map) map
 
-let makeType (json: Json) =
+let makeType (ignoreTrivia: bool) (json: Json) =
     let rec construct json =
         match json with
         | JObject (JBag map) ->
@@ -119,10 +119,13 @@ let makeType (json: Json) =
 
             NoTrivia, FArray sub
         | JNull -> Inline "null", FOption FUndecided
+        |> fun (trivia, fstype) ->
+            if ignoreTrivia then NoTrivia, fstype
+            else trivia, fstype
 
     match construct json with
     | _, FArray (FAnonymous def) -> FNamedType("Message", def)
-    | e -> failwithf "Invalid top-level object %A" e
+    | _, e -> e
 
 let rec makeSource level typeDef =
     let indentAt lvl item = String.replicate lvl "  " + item
@@ -139,13 +142,14 @@ let rec makeSource level typeDef =
         |> String.concat "\n"
 
     let rec makeProp level (name, (trivia, sub)) =
+        let inner = makeSource level sub
         match trivia with
-        | NoTrivia -> [ $"{name} : {makeSource level sub}" ]
-        | Inline c -> [ $"{name} : {makeSource level sub} // {c}" ]
+        | NoTrivia -> [ $"{name} : {inner}" ]
+        | Inline c -> [ $"{name} : {inner} // {c}" ]
         | Multiline lines ->
             lines
             |> List.map (fun l -> $"// {l}")
-            |> List.append [ $"{name} : {makeSource level sub}" ]
+            |> List.append [ $"{name} : {inner}" ]
 
     let makeProps map =
         map |> Map.toSeq |> Seq.collect (makeProp (level + 1))
@@ -169,10 +173,17 @@ let rec makeSource level typeDef =
     | FUmx (sub, param) -> $"{make sub}<{param}>"
     | FUndecided -> "obj"
 
-let infer text =
+let infer (text: string) =
     match SimpleJson.tryParse text with
-    | Some (JObject _ as json) -> Ok <| makeType (JArray [ json ])
-    | Some (JArray _ as json) -> Ok <| makeType json
+    | Some (JObject _ as json) -> 
+        Ok ("Single message contract", makeType false (JArray [json]))
+    | Some (JArray items as json) -> 
+        let message = 
+            if items |> List.map (makeType true) |> List.distinct |> List.length = 1 
+            then "Multiple examples with same contract"
+            else "Multiple examples with unified contract"
+
+        Ok (message, makeType false json)
     | None -> 
         try
             Fable.Core.JS.JSON.parse text |> ignore
@@ -183,5 +194,5 @@ let infer text =
 
 let generateSource =
     function
-    | Ok def -> makeSource 0 def
+    | Ok (header, def) -> $"// {header}\n{makeSource 0 def}"
     | Error error -> $"(* {error} *)"

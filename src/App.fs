@@ -10,7 +10,7 @@ let fsharpEditor =
 let updateUi _ =
     jsonEditor.getValue ()
     |> InferType.infer
-    |> InferType.generateSource
+    |> InferType.generateSource 
     |> fsharpEditor.setValue
 
 jsonEditor.on ("change", updateUi)
