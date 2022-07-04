@@ -127,6 +127,12 @@ let makeType (ignoreTrivia: bool) (json: Json) =
     | _, FArray (FAnonymous def) -> FNamedType("Message", def)
     | _, e -> e
 
+let reservedKeywords =
+    // https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/keyword-reference
+    // Result of:
+    // Array.from(document.querySelectorAll("td > code")).map(a => `"${a.innerText}"`).join("; ")
+    set ["abstract"; "and"; "as"; "assert"; "base"; "begin"; "class"; "default"; "delegate"; "do"; "done"; "downcast"; "downto"; "for"; "elif"; "else if"; "else"; "end"; "begin"; "exception"; "extern"; "false"; "finally"; "try"; "fixed"; "for"; "fun"; "function"; "fun"; "match"; "global"; "if"; "in"; "inherit"; "inline"; "interface"; "internal"; "lazy"; "let"; "let!"; "match"; "match!"; "member"; "module"; "mutable"; "namespace"; "new"; "not"; "not struct"; "null"; "of"; "open"; "or"; "or"; "||"; "override"; "private"; "public"; "rec"; "return"; "return!"; "select"; "static"; "struct"; "then"; "to"; "for"; "true"; "try"; "with"; "finally"; "type"; "upcast"; "use"; "let"; "Dispose"; "use!"; "let!"; "Dispose"; "val"; "void"; "void"; "when"; "while"; "with"; "match"; "yield"; "yield!"; "const"; "const"; "method"; "member"; "constructor"; "new"; "atomic"; "eager"; "let eager"; "let lazy"; "object"; "recursive"; "rec"; "functor"; "module M(args) = ..."; "measure"; "[<Measure>]"; "volatile"; "[<Volatile>]"]
+
 let rec makeSource level typeDef =
     let indentAt lvl item = String.replicate lvl "  " + item
 
@@ -143,6 +149,7 @@ let rec makeSource level typeDef =
 
     let rec makeProp level (name, (trivia, sub)) =
         let inner = makeSource level sub
+        let name = if reservedKeywords |> Set.contains name then $"``{name}``" else name
         match trivia with
         | NoTrivia -> [ $"{name} : {inner}" ]
         | Inline c -> [ $"{name} : {inner} // {c}" ]
