@@ -10,11 +10,10 @@
     "webpack-cli": "^3.3.0",
     "webpack-dev-server": "^3.11.2"
   },
-  "name": "SimpleFableApp",
+  "name": "infer-contract",
   "version": "1.0.0",
   "dependencies": {
     "ace-builds": "^1.4.12",
-    "node-sass": "^6.0.0",
     "purecss": "^2.0.6"
   }
 }
