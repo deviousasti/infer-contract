@@ -14,48 +14,37 @@
     <main class="main">
         <pre class="code-panel" id="json-editor">
 {
-    "fcid": "FC000",
-    "pickTicketId": "12787242A",
-    "shipMethod": "FedExHome_MF",
+    "id": "1234A",
+    "shipMethod": "FedExHome",
     "shippingCarrier": "FedEx",
     "shippingLabels": [
         {
-        "trackingNumber": "1234567",
-        "shippingLabelUrl": "",
-        "shippingLabelZpl": ""
+            "trackingNumber": "1234567",
+            "shippingLabelUrl": "https://fedex.com/shipping/"
+        },
+        {
+            "trackingNumber": "1234568",
+            "shippingLabelZpl": ""
         }
     ],
     "shippedDate": "2020-10-09T20:57:33+00:00",
     "expectedDeliveryDate": "2020-10-09T20:57:33+00:00",
     "carrierPickupDate": "2020-10-09T20:57:33+00:00",
-    "shippingLocation": "SH1",
+    "shippingLocation": "L1",
     "shippedFrom": {
-        "address1": "2 GATEWAY BLVDBBB",
-        "address2": "INBOUND",
-        "city": "PEDRICKTOWN",
-        "state": "NJ",
-        "zip": "08067",
-        "isBusiness": null,
-        "isWeekendDeliveries": null,
-        "businessName": null
+        "address1": "404",
+        "address2": "NOT FOUND",
+        "city": "FLAVORTOWN",
+        "state": "NY",
+        "zip": "08067"
     },
-    "skuQty": {
-        "AA8FS6": 2
+    "skus": {
+        "ABC": 1,
+        "DEF": 1
     },
-    "skuUnitQty": {
-        "AA8FS6": 2
-    },
-    "cancelledQty": {},
-    "cancelledUnitQty": {},
     "user": "SLAM",
-    "userDetails": null,
     "timestamp": "2020-10-09T20:57:33+00:00",
-    "packageAsn": "ASN_HERE",
-    "storeId": null,
-    "carrierMethodId": null,
-    "xmlCarrierServiceCode": "167",
-    "OutboundTrackingNumber": "1234567",
-    "InboundTrackingNumber": null,
+    "packageAsn": "ASN_HERE",    
     "UserId": "SLAM"
 }
         </pre>

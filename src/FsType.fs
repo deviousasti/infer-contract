@@ -87,7 +87,7 @@ let (|JLiteral|_|) = function JString _ | JBool _ | JNumber _ -> Some () | _ -> 
 let (|JBag|_|) map =
     iif (Map.forall (tuple (function UpperCase _, JLiteral -> true | _ -> false)) map) map
 
-let makeType (ignoreTrivia: bool) (json: Json) =
+let makeType (ignoreTrivia: bool) (json: Json) =    
     let rec construct json =
         match json with
         | JObject (JBag map) ->
@@ -122,16 +122,17 @@ let makeType (ignoreTrivia: bool) (json: Json) =
         |> fun (trivia, fstype) ->
             if ignoreTrivia then NoTrivia, fstype
             else trivia, fstype
-
+    
     match construct json with
     | _, FArray (FAnonymous def) -> FNamedType("Message", def)
     | _, e -> e
+    |> List.singleton
 
 let reservedKeywords =
     // https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/keyword-reference
     // Result of:
     // Array.from(document.querySelectorAll("td > code")).map(a => `"${a.innerText}"`).join("; ")
-    set ["abstract"; "and"; "as"; "assert"; "base"; "begin"; "class"; "default"; "delegate"; "do"; "done"; "downcast"; "downto"; "for"; "elif"; "else if"; "else"; "end"; "begin"; "exception"; "extern"; "false"; "finally"; "try"; "fixed"; "for"; "fun"; "function"; "fun"; "match"; "global"; "if"; "in"; "inherit"; "inline"; "interface"; "internal"; "lazy"; "let"; "let!"; "match"; "match!"; "member"; "module"; "mutable"; "namespace"; "new"; "not"; "not struct"; "null"; "of"; "open"; "or"; "or"; "||"; "override"; "private"; "public"; "rec"; "return"; "return!"; "select"; "static"; "struct"; "then"; "to"; "for"; "true"; "try"; "with"; "finally"; "type"; "upcast"; "use"; "let"; "Dispose"; "use!"; "let!"; "Dispose"; "val"; "void"; "void"; "when"; "while"; "with"; "match"; "yield"; "yield!"; "const"; "const"; "method"; "member"; "constructor"; "new"; "atomic"; "eager"; "let eager"; "let lazy"; "object"; "recursive"; "rec"; "functor"; "module M(args) = ..."; "measure"; "[<Measure>]"; "volatile"; "[<Volatile>]"]
+    set ["abstract"; "and"; "as"; "assert"; "base"; "begin"; "class"; "default"; "delegate"; "do"; "done"; "downcast"; "downto"; "for"; "elif"; "else if"; "else"; "end"; "begin"; "exception"; "extern"; "false"; "finally"; "try"; "fixed"; "for"; "fun"; "function"; "fun"; "match"; "global"; "if"; "in"; "inherit"; "inline"; "interface"; "internal"; "lazy"; "let"; "let!"; "match"; "match!"; "member"; "module"; "mutable"; "namespace"; "new"; "not"; "not struct"; "null"; "of"; "open"; "or"; "or"; "||"; "override"; "private"; "public"; "rec"; "return"; "return!"; "select"; "static"; "struct"; "then"; "to"; "for"; "true"; "try"; "with"; "finally"; "type"; "upcast"; "use"; "let"; "Dispose"; "use!"; "let!"; "Dispose"; "val"; "void"; "void"; "when"; "while"; "with"; "match"; "yield"; "yield!"; "const"; "const"; "method"; "member"; "constructor"; "new"; "atomic"; "eager"; "let eager"; "let lazy"; "object"; "recursive"; "rec"; "functor"; "measure"; "volatile"; ]
 
 let rec makeSource level typeDef =
     let indentAt lvl item = String.replicate lvl "  " + item
@@ -149,7 +150,10 @@ let rec makeSource level typeDef =
 
     let rec makeProp level (name, (trivia, sub)) =
         let inner = makeSource level sub
-        let name = if reservedKeywords |> Set.contains name then $"``{name}``" else name
+        let name = 
+            if reservedKeywords |> Set.contains name || name.Contains(" ")
+            then $"``{name}``" 
+            else name
         match trivia with
         | NoTrivia -> [ $"{name} : {inner}" ]
         | Inline c -> [ $"{name} : {inner} // {c}" ]
@@ -201,5 +205,7 @@ let infer (text: string) =
 
 let generateSource =
     function
-    | Ok (header, def) -> $"// {header}\n{makeSource 0 def}"
+    | Ok (header, def) -> 
+        let source = def |> Seq.map (makeSource 0) |> String.concat "\nand\n"
+        $"// {header}\n{source}"
     | Error error -> $"(* {error} *)"
